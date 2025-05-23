@@ -149,13 +149,20 @@ WHERE rank_in_month <= 3;
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- Q10:  Create a stored procedure that takes the 'Week_no' as input and generates a report displaying the total shares for each 'Post_type'. The output of the procedure should consist of two columns: 
- SELECT 
-    fc.post_type,
-    SUM(fc.shares) AS total_shares
-FROM fact_content fc
-JOIN dim_dates dd ON fc.date = dd.date 
-WHERE dd.week_no = 'W3'
-GROUP BY fc.post_type;
-
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetSharesByPostType`(IN input_week_no VARCHAR(5))
+BEGIN
+    SELECT 
+        fc.post_type,
+        SUM(fc.shares) AS total_shares
+    FROM fact_content fc
+    JOIN dim_dates dd ON fc.date = dd.date
+    WHERE dd.week_no = input_week_no
+    GROUP BY fc.post_type;
+END
 -- 📌 Insight:The stored procedure GetSharesByPostType was created to dynamically return total shares for each post type based on the selected week_no. This allows for flexible weekly analysis.For example, running the procedure for W3 returns relevant data instantly, making it efficient for weekly trend comparisons and reporting.
 
+Example Usage
+      Call the procedure for week “w3”:
+CALL GetSharesByPostType('w3');
+
+-- 📌 Insight: This will return total shares per post type for week 3,
